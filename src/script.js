@@ -3496,24 +3496,23 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    function hasAnyLettersEntered() {
-        return tiles.some(tile => tile.textContent.trim().length > 0);
+    function shouldUpdateLive() {
+        // Only update live if word count is manageable (≤1800)
+        return filteredWords.length <= 1800;
     }
 
     if (blendSliderInput) {
         blendSliderInput.addEventListener('input', (e) => {
             const value = parseInt(e.target.value);
             syncBlendInputs(value);
-            // If letters are entered, update live while dragging
-            if (hasAnyLettersEntered()) {
+            // Update live only if word count is small enough
+            if (shouldUpdateLive()) {
                 updateBlendFromValue(value);
             }
         });
-        // Recalculate when slider is released (for when no letters entered)
+        // Always recalculate when slider is released
         blendSliderInput.addEventListener('change', (e) => {
-            if (!hasAnyLettersEntered()) {
-                updateBlendFromValue(parseInt(e.target.value));
-            }
+            updateBlendFromValue(parseInt(e.target.value));
         });
     }
 
