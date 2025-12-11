@@ -1528,6 +1528,7 @@ const MODERN_WORD_FREQUENCY = {
   "plate": 6817,
   "plaza": 901,
   "plead": 1630,
+  "pleas": 567,
   "pleat": 0,
   "plied": 0,
   "plier": 0,

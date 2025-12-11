@@ -1528,6 +1528,7 @@ const WORD_LIST = [
   "plate",
   "plaza",
   "plead",
+  "pleas",
   "pleat",
   "plied",
   "plier",
