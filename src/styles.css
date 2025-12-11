@@ -1338,17 +1338,28 @@ body.colorblind-mode .tile.green::after {
 
 @media (max-width: 600px) {
     body {
-        padding: 10px;
+        padding: 0;
     }
 
     .container {
         padding: 15px;
-        border-radius: 12px;
+        border-radius: 0;
+        border: none;
         max-width: 100%;
+        background: rgba(10, 10, 15, 0.85);
+        box-shadow: none;
+        backdrop-filter: blur(8px);
+        -webkit-backdrop-filter: blur(8px);
+        min-height: 100vh;
     }
 
     h1 {
-        font-size: 1.8em;
+        font-size: 1.6em;
+        margin-bottom: 15px;
+    }
+
+    .subtitle {
+        font-size: 0.5em;
     }
 
     .grid-area {
@@ -1370,6 +1381,7 @@ body.colorblind-mode .tile.green::after {
         max-width: 55px;
         max-height: 55px;
         font-size: clamp(18px, 5vw, 24px);
+        border-width: 1px;
     }
 
     .trash-btn {
@@ -1388,31 +1400,49 @@ body.colorblind-mode .tile.green::after {
     }
 
     .widget-section {
-        border-radius: 10px;
+        border-radius: 8px;
+        border-width: 1px;
     }
 
     .widget-content {
         padding: 12px;
     }
 
+    .widget-header h3 {
+        font-size: 14px;
+    }
+
     .controls {
         flex-direction: column;
         align-items: stretch;
+        gap: 10px;
+    }
+
+    .constraints-digest {
+        padding: 10px;
+        font-size: 12px;
+    }
+
+    .help-icon-container {
+        top: 5px;
+        right: 5px;
+    }
+
+    .help-icon {
+        width: 20px;
+        height: 20px;
+        font-size: 12px;
     }
 }
 
 /* Extra small screens (iPhone SE, etc.) */
 @media (max-width: 380px) {
-    body {
-        padding: 5px;
-    }
-
     .container {
         padding: 10px;
     }
 
     h1 {
-        font-size: 1.5em;
+        font-size: 1.4em;
     }
 
     .tile {
@@ -1428,6 +1458,14 @@ body.colorblind-mode .tile.green::after {
         height: calc((100vw - 70px) / 5);
         max-height: 50px;
         font-size: 14px;
+    }
+
+    .widget-header h3 {
+        font-size: 12px;
+    }
+
+    .widget-content {
+        padding: 8px;
     }
 }
 

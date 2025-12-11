@@ -3044,60 +3044,73 @@ function loadWidgetPreferences() {
 function initMatrixAnimation() {
     const canvas = document.getElementById('matrixCanvas');
     const ctx = canvas.getContext('2d');
-    
-    // Set canvas size
-    function resizeCanvas() {
-        canvas.width = window.innerWidth;
-        canvas.height = window.innerHeight;
-    }
-    resizeCanvas();
-    window.addEventListener('resize', resizeCanvas);
-    
+
     // Matrix characters - mix of letters and Wordle-related words
     const matrixChars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789@#$%^&*';
     const wordleWords = ['CRANE', 'SLATE', 'TRACE', 'CRATE', 'STARE', 'ARISE', 'RAISE', 'LEARN', 'RENAL', 'SNARE'];
-    
+
     // Convert to array
     const chars = matrixChars.split('');
 
-    // Column settings
-    const fontSize = 24; // Larger letters = fewer columns = better performance
-    const columnWidth = 28; // Extra spacing to prevent overlap
-    const columns = canvas.width / columnWidth;
-    
-    // Create drops array - one per column
-    const drops = [];
-    for (let i = 0; i < columns; i++) {
-        // Assign color to each drop column (70% gray, 20% yellow, 10% green)
-        let color;
-        const colorChoice = Math.random();
-        if (colorChoice < 0.7) {
-            // Gray (70% chance)
-            const gray = 140 + Math.random() * 60;
-            color = `rgb(${gray}, ${gray}, ${gray})`;
-        } else if (colorChoice < 0.9) {
-            // Yellow/Gold (20% chance) - bright yellow
-            color = `rgb(255, ${200 + Math.random() * 55}, 0)`;
+    // Responsive settings
+    let fontSize, columnWidth, columns, drops;
+
+    function getResponsiveSettings() {
+        const width = window.innerWidth;
+        if (width <= 380) {
+            return { fontSize: 12, columnWidth: 14 };
+        } else if (width <= 600) {
+            return { fontSize: 14, columnWidth: 16 };
+        } else if (width <= 900) {
+            return { fontSize: 18, columnWidth: 21 };
         } else {
-            // Green (10% chance) - bright green
-            color = `rgb(0, ${200 + Math.random() * 55}, 0)`;
-        }
-        
-        drops[i] = {
-            y: Math.random() * -100,
-            speed: 0.3 + Math.random() * 0.3,
-            chars: [],
-            isWord: Math.random() > 0.9, // 10% chance to be a word
-            word: '',
-            wordIndex: 0,
-            color: color // Store the color for this drop
-        };
-        
-        // Initialize with random characters or word
-        if (drops[i].isWord) {
-            drops[i].word = wordleWords[Math.floor(Math.random() * wordleWords.length)];
+            return { fontSize: 24, columnWidth: 28 };
         }
     }
+
+    function createDrops() {
+        const settings = getResponsiveSettings();
+        fontSize = settings.fontSize;
+        columnWidth = settings.columnWidth;
+        columns = Math.floor(canvas.width / columnWidth);
+
+        drops = [];
+        for (let i = 0; i < columns; i++) {
+            let color;
+            const colorChoice = Math.random();
+            if (colorChoice < 0.7) {
+                const gray = 140 + Math.random() * 60;
+                color = `rgb(${gray}, ${gray}, ${gray})`;
+            } else if (colorChoice < 0.9) {
+                color = `rgb(255, ${200 + Math.random() * 55}, 0)`;
+            } else {
+                color = `rgb(0, ${200 + Math.random() * 55}, 0)`;
+            }
+
+            drops[i] = {
+                y: Math.random() * -100,
+                speed: 0.3 + Math.random() * 0.3,
+                chars: [],
+                isWord: Math.random() > 0.9,
+                word: '',
+                wordIndex: 0,
+                color: color
+            };
+
+            if (drops[i].isWord) {
+                drops[i].word = wordleWords[Math.floor(Math.random() * wordleWords.length)];
+            }
+        }
+    }
+
+    // Set canvas size and recreate drops
+    function resizeCanvas() {
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+        createDrops();
+    }
+    resizeCanvas();
+    window.addEventListener('resize', resizeCanvas);
     
     // Drawing function
     function draw() {
