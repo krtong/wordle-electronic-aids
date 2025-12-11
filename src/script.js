@@ -3452,13 +3452,18 @@ document.addEventListener('DOMContentLoaded', () => {
     const blendSliderInput = document.getElementById('blendSliderInput');
     const blendNumberInput = document.getElementById('blendNumberInput');
 
+    function syncBlendInputs(value) {
+        // Sync slider and number input visually (no recalculation)
+        if (blendSliderInput) blendSliderInput.value = value;
+        if (blendNumberInput) blendNumberInput.value = value;
+    }
+
     function updateBlendFromValue(value) {
         // Convert 1-100 value to blend weight (1 = 100% method1, 100 = 100% method2)
         blendWeight = (value - 1) / 99; // 1->0, 100->1
 
-        // Sync slider and number input
-        if (blendSliderInput) blendSliderInput.value = value;
-        if (blendNumberInput) blendNumberInput.value = value;
+        // Sync inputs
+        syncBlendInputs(value);
 
         // Just re-blend and display cached scores, don't recalculate
         if (blendScoresCache.method1 && blendScoresCache.method2 && blendScoresCache.filteredWordsVersion === filteredWordsVersion) {
@@ -3487,7 +3492,12 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     if (blendSliderInput) {
+        // Update visuals while dragging (no recalculation)
         blendSliderInput.addEventListener('input', (e) => {
+            syncBlendInputs(parseInt(e.target.value));
+        });
+        // Recalculate only when slider is released
+        blendSliderInput.addEventListener('change', (e) => {
             updateBlendFromValue(parseInt(e.target.value));
         });
     }
