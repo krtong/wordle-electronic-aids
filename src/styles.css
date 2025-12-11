@@ -1337,27 +1337,97 @@ body.colorblind-mode .tile.green::after {
 }
 
 @media (max-width: 600px) {
+    body {
+        padding: 10px;
+    }
+
     .container {
-        padding: 20px;
+        padding: 15px;
+        border-radius: 12px;
+        max-width: 100%;
     }
-    
+
     h1 {
-        font-size: 2em;
+        font-size: 1.8em;
     }
-    
+
+    .grid-area {
+        gap: 10px;
+    }
+
+    .grid-container {
+        gap: 8px;
+    }
+
     .grid {
-        max-width: 300px;
-        gap: 5px;
+        max-width: 100%;
+        gap: 4px;
     }
-    
+
     .tile {
-        width: 55px;
-        height: 55px;
-        font-size: 24px;
+        width: calc((100vw - 90px) / 5);
+        height: calc((100vw - 90px) / 5);
+        max-width: 55px;
+        max-height: 55px;
+        font-size: clamp(18px, 5vw, 24px);
     }
-    
+
+    .trash-btn {
+        width: 30px;
+        height: calc((100vw - 90px) / 5);
+        max-height: 55px;
+        font-size: 16px;
+    }
+
+    .row-controls {
+        gap: 4px;
+    }
+
     .word-list {
-        grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
+        grid-template-columns: repeat(auto-fill, minmax(70px, 1fr));
+    }
+
+    .widget-section {
+        border-radius: 10px;
+    }
+
+    .widget-content {
+        padding: 12px;
+    }
+
+    .controls {
+        flex-direction: column;
+        align-items: stretch;
+    }
+}
+
+/* Extra small screens (iPhone SE, etc.) */
+@media (max-width: 380px) {
+    body {
+        padding: 5px;
+    }
+
+    .container {
+        padding: 10px;
+    }
+
+    h1 {
+        font-size: 1.5em;
+    }
+
+    .tile {
+        width: calc((100vw - 70px) / 5);
+        height: calc((100vw - 70px) / 5);
+        max-width: 50px;
+        max-height: 50px;
+        font-size: clamp(16px, 4.5vw, 20px);
+    }
+
+    .trash-btn {
+        width: 25px;
+        height: calc((100vw - 70px) / 5);
+        max-height: 50px;
+        font-size: 14px;
     }
 }
 
