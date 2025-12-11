@@ -456,35 +456,6 @@ h3 {
     transform: scale(1.05);
 }
 
-/* Colorblind mode indicators */
-body.colorblind-mode .tile.gray::after,
-body.colorblind-mode .tile.yellow::after,
-body.colorblind-mode .tile.green::after {
-    content: '';
-    position: absolute;
-    bottom: 4px;
-    right: 4px;
-    width: 12px;
-    height: 12px;
-    border-radius: 50%;
-    border: 2px solid currentColor;
-}
-
-body.colorblind-mode .tile.gray::after {
-    background: transparent;
-    border-style: solid;
-}
-
-body.colorblind-mode .tile.yellow::after {
-    background: currentColor;
-    clip-path: polygon(50% 0%, 100% 100%, 0% 100%);
-    border-radius: 0;
-}
-
-body.colorblind-mode .tile.green::after {
-    background: currentColor;
-}
-
 .layout-classic .controls {
     display: flex;
     flex-direction: column;

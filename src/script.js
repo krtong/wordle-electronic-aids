@@ -3253,24 +3253,6 @@ document.addEventListener('DOMContentLoaded', () => {
         toggleAutofillGreen(e.target.checked);
     });
 
-    // Add colorblind mode toggle handler
-    document.getElementById('colorblindToggle').addEventListener('change', (e) => {
-        if (e.target.checked) {
-            document.body.classList.add('colorblind-mode');
-            localStorage.setItem('colorblindMode', 'true');
-        } else {
-            document.body.classList.remove('colorblind-mode');
-            localStorage.setItem('colorblindMode', 'false');
-        }
-    });
-
-    // Restore colorblind mode preference
-    const savedColorblindMode = localStorage.getItem('colorblindMode');
-    if (savedColorblindMode === 'true') {
-        document.getElementById('colorblindToggle').checked = true;
-        document.body.classList.add('colorblind-mode');
-    }
-
     // Add letter filter handlers
     const excludeInput = document.getElementById('excludeLetters');
     const includeInput = document.getElementById('includeLetters');

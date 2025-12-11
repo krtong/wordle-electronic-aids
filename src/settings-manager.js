@@ -10,8 +10,7 @@ const SettingsManager = {
         excludeYellowToggle: false,
         perPositionToggle: true,
         autofillToggle: true,
-        advancedModeToggle: false,
-        colorblindMode: false
+        advancedModeToggle: false
     },
 
     /**
