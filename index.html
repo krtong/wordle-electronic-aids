@@ -5,11 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Wordle Electronic Aids</title>
     <link rel="stylesheet" href="src/styles.css">
-    <!-- Google AdSense - Replace ca-pub-XXXXXXX with your publisher ID -->
-    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-XXXXXXXXXXXXXXXX" crossorigin="anonymous"></script>
 </head>
 <body>
-    <canvas id="matrixCanvas"></canvas>
     <div class="container layout-classic">
         <h1>W.E.A.<br><span class="subtitle">(wordle electronic aids)</span></h1>
 
@@ -31,16 +28,6 @@
                     </div>
                 </div>
                 <div class="grid-area">
-                    <div class="ad-container">
-                        <!-- Replace data-ad-slot with your ad unit ID from AdSense -->
-                        <ins class="adsbygoogle"
-                             style="display:block"
-                             data-ad-client="ca-pub-XXXXXXXXXXXXXXXX"
-                             data-ad-slot="XXXXXXXXXX"
-                             data-ad-format="vertical"
-                             data-full-width-responsive="false"></ins>
-                        <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
-                    </div>
                     <div class="grid-container">
                         <div class="grid" id="grid">
                             <!-- 6 rows x 5 columns = 30 tiles -->
@@ -85,7 +72,7 @@
                     <h3>Letter Frequency in Possible Words</h3>
                     <div class="widget-controls">
                         <button class="drag-handle">☰</button>
-                        <button class="collapse-btn">−</button>
+                        <button class="collapse-btn">▾</button>
                     </div>
                 </div>
                 <div class="widget-content">
@@ -105,7 +92,7 @@
                     </div>
                     <div class="widget-controls">
                         <button class="drag-handle">☰</button>
-                        <button class="collapse-btn">−</button>
+                        <button class="collapse-btn">▾</button>
                     </div>
                 </div>
                 <div class="widget-content">
@@ -167,7 +154,7 @@
                     <h3>Wordle Art Planner</h3>
                     <div class="widget-controls">
                         <button class="drag-handle">☰</button>
-                        <button class="collapse-btn">+</button>
+                        <button class="collapse-btn">▸</button>
                     </div>
                 </div>
                 <div class="widget-content">
@@ -222,12 +209,65 @@
                 </div>
             </div>
 
+            <div class="widget-section draggable collapsed" data-widget="theme">
+                <div class="widget-header">
+                    <h3>Theme Colors</h3>
+                    <div class="widget-controls">
+                        <button class="drag-handle">☰</button>
+                        <button class="collapse-btn">▸</button>
+                    </div>
+                </div>
+                <div class="widget-content">
+                    <div class="theme-controls">
+                        <div class="color-group">
+                            <label>Slate</label>
+                            <input type="color" id="colorSlate" value="#2d3a4d">
+                            <span class="hex-value" id="hexSlate">#2d3a4d</span>
+                        </div>
+                        <div class="color-group">
+                            <label>Teal</label>
+                            <input type="color" id="colorTeal" value="#3F8B7F">
+                            <span class="hex-value" id="hexTeal">#3F8B7F</span>
+                        </div>
+                        <div class="color-group">
+                            <label>Purple</label>
+                            <input type="color" id="colorPurple" value="#5f448e">
+                            <span class="hex-value" id="hexPurple">#5f448e</span>
+                        </div>
+                        <div class="color-group">
+                            <label>Coral</label>
+                            <input type="color" id="colorCoral" value="#E07A5F">
+                            <span class="hex-value" id="hexCoral">#E07A5F</span>
+                        </div>
+                        <div class="color-group">
+                            <label>Amber</label>
+                            <input type="color" id="colorAmber" value="#e5a800">
+                            <span class="hex-value" id="hexAmber">#e5a800</span>
+                        </div>
+                        <div class="color-group">
+                            <label>Rose</label>
+                            <input type="color" id="colorRose" value="#c75289">
+                            <span class="hex-value" id="hexRose">#c75289</span>
+                        </div>
+                        <div class="color-group">
+                            <label>Blue</label>
+                            <input type="color" id="colorBlue" value="#3D5A80">
+                            <span class="hex-value" id="hexBlue">#3D5A80</span>
+                        </div>
+                    </div>
+                    <div class="theme-actions">
+                        <button id="resetTheme" class="small-btn">Reset to Default</button>
+                        <button id="exportTheme" class="small-btn">Copy CSS</button>
+                    </div>
+                </div>
+            </div>
+
             <div class="widget-section draggable collapsed" data-widget="filter">
                 <div class="widget-header">
                     <h3>Letter Filter</h3>
                     <div class="widget-controls">
                         <button class="drag-handle">☰</button>
-                        <button class="collapse-btn">+</button>
+                        <button class="collapse-btn">▸</button>
                     </div>
                 </div>
                 <div class="widget-content">

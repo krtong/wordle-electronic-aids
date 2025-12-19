@@ -276,6 +276,19 @@ function loadWords() {
 }
 
 
+function highlightNextInput() {
+    // Remove existing highlight
+    tiles.forEach(t => t.classList.remove('next-input'));
+
+    // Find first empty tile
+    for (let i = 0; i < tiles.length; i++) {
+        if (!tiles[i].textContent) {
+            tiles[i].classList.add('next-input');
+            break;
+        }
+    }
+}
+
 function createGrid() {
     const grid = document.getElementById('grid');
     const rowControls = document.getElementById('rowControls');
@@ -394,10 +407,11 @@ function createGrid() {
         }
     }
     
-    // Focus first tile
+    // Focus first tile and highlight next input
     if (tiles[0]) {
         tiles[0].focus();
     }
+    highlightNextInput();
 }
 
 function highlightActiveRow(rowIndex) {
@@ -1024,6 +1038,7 @@ function handleInput(e, tile) {
     }, 0);
 
     analyzeBoard();
+    highlightNextInput();
 }
 
 function revertToManualColors() {
@@ -2851,6 +2866,7 @@ function clearRow(rowIndex) {
     
     // Re-analyze the board to update possible words
     analyzeBoard();
+    highlightNextInput();
 }
 
 function clearAll() {
@@ -2878,6 +2894,7 @@ function clearAll() {
     if (tiles[0]) {
         tiles[0].focus();
     }
+    highlightNextInput();
 }
 
 function applyAnswerToGrid() {
@@ -2976,7 +2993,7 @@ function initializeWidgets() {
         const collapseBtn = widget.querySelector('.collapse-btn');
         collapseBtn.addEventListener('click', () => {
             widget.classList.toggle('collapsed');
-            collapseBtn.textContent = widget.classList.contains('collapsed') ? '+' : '−';
+            collapseBtn.textContent = widget.classList.contains('collapsed') ? '▸' : '▾';
             saveWidgetPreferences();
         });
         
@@ -3051,7 +3068,7 @@ function loadWidgetPreferences() {
                 widget.classList.add('collapsed');
                 const collapseBtn = widget.querySelector('.collapse-btn');
                 if (collapseBtn) {
-                    collapseBtn.textContent = '+';
+                    collapseBtn.textContent = '▸';
                 }
             }
         });
@@ -3078,7 +3095,7 @@ function loadWidgetPreferences() {
                 const widget = container.querySelector(`[data-widget="${widgetId}"]`);
                 if (widget) {
                     widget.classList.add('collapsed');
-                    widget.querySelector('.collapse-btn').textContent = '+';
+                    widget.querySelector('.collapse-btn').textContent = '▸';
                 }
             });
         }
@@ -3086,148 +3103,6 @@ function loadWidgetPreferences() {
     } catch (e) {
         console.error('Failed to load widget preferences:', e);
     }
-}
-
-// Matrix animation
-function initMatrixAnimation() {
-    const canvas = document.getElementById('matrixCanvas');
-    const ctx = canvas.getContext('2d');
-
-    // Matrix characters - mix of letters and Wordle-related words
-    const matrixChars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789@#$%^&*';
-    const wordleWords = ['CRANE', 'SLATE', 'TRACE', 'CRATE', 'STARE', 'ARISE', 'RAISE', 'LEARN', 'RENAL', 'SNARE'];
-
-    // Convert to array
-    const chars = matrixChars.split('');
-
-    // Responsive settings
-    let fontSize, columnWidth, columns, drops;
-
-    function getResponsiveSettings() {
-        const width = window.innerWidth;
-        if (width <= 380) {
-            return { fontSize: 12, columnWidth: 14 };
-        } else if (width <= 600) {
-            return { fontSize: 14, columnWidth: 16 };
-        } else if (width <= 900) {
-            return { fontSize: 18, columnWidth: 21 };
-        } else {
-            return { fontSize: 24, columnWidth: 28 };
-        }
-    }
-
-    function createDrops() {
-        const settings = getResponsiveSettings();
-        fontSize = settings.fontSize;
-        columnWidth = settings.columnWidth;
-        columns = Math.floor(canvas.width / columnWidth);
-
-        drops = [];
-        for (let i = 0; i < columns; i++) {
-            let color;
-            const colorChoice = Math.random();
-            if (colorChoice < 0.7) {
-                const gray = 140 + Math.random() * 60;
-                color = `rgb(${gray}, ${gray}, ${gray})`;
-            } else if (colorChoice < 0.9) {
-                color = `rgb(255, ${200 + Math.random() * 55}, 0)`;
-            } else {
-                color = `rgb(0, ${200 + Math.random() * 55}, 0)`;
-            }
-
-            drops[i] = {
-                y: Math.random() * -100,
-                speed: 0.3 + Math.random() * 0.3,
-                chars: [],
-                isWord: Math.random() > 0.9,
-                word: '',
-                wordIndex: 0,
-                color: color
-            };
-
-            if (drops[i].isWord) {
-                drops[i].word = wordleWords[Math.floor(Math.random() * wordleWords.length)];
-            }
-        }
-    }
-
-    // Set canvas size and recreate drops
-    function resizeCanvas() {
-        canvas.width = window.innerWidth;
-        canvas.height = window.innerHeight;
-        createDrops();
-    }
-    resizeCanvas();
-    window.addEventListener('resize', resizeCanvas);
-    
-    // Drawing function
-    function draw() {
-        // Semi-transparent black for fade effect
-        ctx.fillStyle = 'rgba(10, 10, 10, 0.05)';
-        ctx.fillRect(0, 0, canvas.width, canvas.height);
-        
-        ctx.font = fontSize + 'px monospace';
-        
-        for (let i = 0; i < drops.length; i++) {
-            const drop = drops[i];
-            
-            // Use the pre-assigned color for this drop
-            ctx.fillStyle = drop.color;
-            
-            let char;
-            if (drop.isWord && drop.wordIndex < drop.word.length) {
-                // Display word characters
-                char = drop.word[drop.wordIndex];
-                drop.wordIndex++;
-            } else {
-                // Random character
-                char = chars[Math.floor(Math.random() * chars.length)];
-                
-                // Reset word
-                if (drop.isWord && drop.wordIndex >= drop.word.length) {
-                    drop.isWord = Math.random() > 0.9;
-                    if (drop.isWord) {
-                        drop.word = wordleWords[Math.floor(Math.random() * wordleWords.length)];
-                        drop.wordIndex = 0;
-                    }
-                }
-            }
-            
-            // Draw the character
-            ctx.fillText(char, i * columnWidth, drop.y * fontSize);
-            
-            // Move the drop
-            drop.y += drop.speed;
-            
-            // Reset when reaching bottom
-            if (drop.y * fontSize > canvas.height && Math.random() > 0.975) {
-                drop.y = 0;
-                drop.speed = 0.3 + Math.random() * 0.3;
-                drop.isWord = Math.random() > 0.9;
-                if (drop.isWord) {
-                    drop.word = wordleWords[Math.floor(Math.random() * wordleWords.length)];
-                    drop.wordIndex = 0;
-                }
-                
-                // Reassign color when drop resets (70% gray, 20% yellow, 10% green)
-                const colorChoice = Math.random();
-                if (colorChoice < 0.7) {
-                    // Gray (70% chance)
-                    const gray = 140 + Math.random() * 60;
-                    drop.color = `rgb(${gray}, ${gray}, ${gray})`;
-                } else if (colorChoice < 0.9) {
-                    // Yellow/Gold (20% chance) - bright yellow
-                    drop.color = `rgb(255, ${200 + Math.random() * 55}, 0)`;
-                } else {
-                    // Green (10% chance) - bright green
-                    drop.color = `rgb(0, ${200 + Math.random() * 55}, 0)`;
-                }
-            }
-        }
-    }
-    
-    // Animation loop
-    setInterval(draw, 35);
 }
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -3241,7 +3116,6 @@ document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('wholeWordInputs').style.display = perPositionMode ? 'none' : 'block';
     document.getElementById('perPositionInputs').style.display = perPositionMode ? 'block' : 'none';
 
-    initMatrixAnimation();
     createGrid();
     loadWords();
     initializeWidgets();
@@ -3595,4 +3469,170 @@ document.addEventListener('DOMContentLoaded', () => {
     createArtPlannerGrid();
     updateArtPlanner();
     renderPatternLibrary();
+});
+
+// Theme Color Picker functionality
+document.addEventListener('DOMContentLoaded', () => {
+    const colorInputs = {
+        slate: document.getElementById('colorSlate'),
+        teal: document.getElementById('colorTeal'),
+        purple: document.getElementById('colorPurple'),
+        coral: document.getElementById('colorCoral'),
+        amber: document.getElementById('colorAmber'),
+        rose: document.getElementById('colorRose'),
+        blue: document.getElementById('colorBlue')
+    };
+
+    const hexDisplays = {
+        slate: document.getElementById('hexSlate'),
+        teal: document.getElementById('hexTeal'),
+        purple: document.getElementById('hexPurple'),
+        coral: document.getElementById('hexCoral'),
+        amber: document.getElementById('hexAmber'),
+        rose: document.getElementById('hexRose'),
+        blue: document.getElementById('hexBlue')
+    };
+
+    const defaultColors = {
+        slate: '#2d3a4d',
+        teal: '#3F8B7F',
+        purple: '#5f448e',
+        coral: '#E07A5F',
+        amber: '#e5a800',
+        rose: '#c75289',
+        blue: '#3D5A80'
+    };
+
+    // CSS variable mapping
+    const cssVarMap = {
+        slate: '--slate-800',
+        teal: '--teal-600',
+        purple: '--purple-700',
+        coral: '--coral-500',
+        amber: '--amber-500',
+        rose: '--rose-600',
+        blue: '--blue-600'
+    };
+
+    // Update hex display
+    function updateHexDisplay(name, value) {
+        if (hexDisplays[name]) {
+            hexDisplays[name].textContent = value.toUpperCase();
+        }
+    }
+
+    // Load saved theme from localStorage
+    function loadSavedTheme() {
+        const savedTheme = localStorage.getItem('wordleTheme');
+        if (savedTheme) {
+            try {
+                const theme = JSON.parse(savedTheme);
+                Object.keys(theme).forEach(key => {
+                    if (colorInputs[key]) {
+                        colorInputs[key].value = theme[key];
+                        const cssVar = cssVarMap[key];
+                        if (cssVar) {
+                            document.documentElement.style.setProperty(cssVar, theme[key]);
+                        }
+                        updateHexDisplay(key, theme[key]);
+                    }
+                });
+            } catch (e) {
+                console.error('Failed to load theme:', e);
+            }
+        }
+    }
+
+    // Apply color change
+    function applyColor(name, value) {
+        const cssVar = cssVarMap[name];
+        if (cssVar) {
+            document.documentElement.style.setProperty(cssVar, value);
+        }
+        updateHexDisplay(name, value);
+        saveTheme();
+    }
+
+    // Save current theme
+    function saveTheme() {
+        const theme = {};
+        Object.keys(colorInputs).forEach(key => {
+            if (colorInputs[key]) {
+                theme[key] = colorInputs[key].value;
+            }
+        });
+        localStorage.setItem('wordleTheme', JSON.stringify(theme));
+    }
+
+    // Add event listeners to color inputs
+    Object.keys(colorInputs).forEach(key => {
+        const input = colorInputs[key];
+        if (input) {
+            input.addEventListener('input', (e) => {
+                applyColor(key, e.target.value);
+            });
+        }
+    });
+
+    // Add click-to-copy on hex values
+    Object.keys(hexDisplays).forEach(key => {
+        const hexSpan = hexDisplays[key];
+        if (hexSpan) {
+            hexSpan.addEventListener('click', () => {
+                const hex = hexSpan.textContent;
+                navigator.clipboard.writeText(hex).then(() => {
+                    const original = hexSpan.textContent;
+                    hexSpan.textContent = 'Copied!';
+                    setTimeout(() => {
+                        hexSpan.textContent = original;
+                    }, 1000);
+                });
+            });
+        }
+    });
+
+    // Reset theme button
+    const resetBtn = document.getElementById('resetTheme');
+    if (resetBtn) {
+        resetBtn.addEventListener('click', () => {
+            Object.keys(defaultColors).forEach(key => {
+                if (colorInputs[key]) {
+                    colorInputs[key].value = defaultColors[key];
+                    const cssVar = cssVarMap[key];
+                    if (cssVar) {
+                        document.documentElement.style.setProperty(cssVar, defaultColors[key]);
+                    }
+                    updateHexDisplay(key, defaultColors[key]);
+                }
+            });
+            localStorage.removeItem('wordleTheme');
+        });
+    }
+
+    // Export theme button (copy CSS to clipboard)
+    const exportBtn = document.getElementById('exportTheme');
+    if (exportBtn) {
+        exportBtn.addEventListener('click', () => {
+            const css = `/* UI Colors */
+--slate-800: ${colorInputs.slate.value};
+--teal-600: ${colorInputs.teal.value};
+--purple-700: ${colorInputs.purple.value};
+--coral-500: ${colorInputs.coral.value};
+--amber-500: ${colorInputs.amber.value};
+--rose-600: ${colorInputs.rose.value};
+--blue-600: ${colorInputs.blue.value};`;
+            navigator.clipboard.writeText(css).then(() => {
+                const originalText = exportBtn.textContent;
+                exportBtn.textContent = 'Copied!';
+                setTimeout(() => {
+                    exportBtn.textContent = originalText;
+                }, 2000);
+            }).catch(err => {
+                console.error('Failed to copy:', err);
+            });
+        });
+    }
+
+    // Load saved theme on init
+    loadSavedTheme();
 });
