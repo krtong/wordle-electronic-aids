@@ -3059,18 +3059,31 @@ function loadWidgetPreferences() {
     const container = document.getElementById('widgetsContainer');
 
     if (!saved) {
-        // No saved preferences - apply defaults
-        // Collapse all widgets except "results" (Possible Words)
-        const defaultCollapsed = ['filter', 'art', 'answer', 'frequency'];
-        defaultCollapsed.forEach(widgetId => {
-            const widget = container.querySelector(`[data-widget="${widgetId}"]`);
-            if (widget) {
-                widget.classList.add('collapsed');
-                const collapseBtn = widget.querySelector('.collapse-btn');
-                if (collapseBtn) {
-                    collapseBtn.textContent = '▸';
-                }
-            }
+        // No saved preferences - apply defaults.
+        // Order:
+        //   1) Possible Words (expanded)
+        //   2) Letter Frequency in Possible Words (expanded)
+        //   3) Wordle Art Planner (collapsed)
+        //   4) Letter Filter (collapsed)
+        const defaultOrder = ['results', 'frequency', 'art', 'filter'];
+        const defaultExpanded = new Set(['results', 'frequency']);
+
+        const widgets = Array.from(container.querySelectorAll('.widget-section'));
+        defaultOrder.forEach((widgetId) => {
+            const widget = widgets.find((w) => w.dataset.widget === widgetId);
+            if (widget) container.appendChild(widget);
+        });
+        // Append any unknown widgets at the end (future-proofing).
+        widgets.forEach((w) => {
+            if (!defaultOrder.includes(w.dataset.widget)) container.appendChild(w);
+        });
+
+        container.querySelectorAll('.widget-section').forEach((widget) => {
+            const collapseBtn = widget.querySelector('.collapse-btn');
+            const widgetId = widget.dataset.widget;
+            const expanded = defaultExpanded.has(widgetId);
+            widget.classList.toggle('collapsed', !expanded);
+            if (collapseBtn) collapseBtn.textContent = expanded ? '▾' : '▸';
         });
         return;
     }
@@ -3087,9 +3100,19 @@ function loadWidgetPreferences() {
                     container.appendChild(widget);
                 }
             });
+            const orderSet = new Set(prefs.order);
+            widgets.forEach((w) => {
+                if (!orderSet.has(w.dataset.widget)) container.appendChild(w);
+            });
         }
 
         // Restore collapsed states
+        // Normalize: start from "expanded" for all widgets, then apply collapsed list.
+        container.querySelectorAll('.widget-section').forEach(widget => {
+            widget.classList.remove('collapsed');
+            const collapseBtn = widget.querySelector('.collapse-btn');
+            if (collapseBtn) collapseBtn.textContent = '▾';
+        });
         if (prefs.collapsed) {
             prefs.collapsed.forEach(widgetId => {
                 const widget = container.querySelector(`[data-widget="${widgetId}"]`);
@@ -3469,170 +3492,4 @@ document.addEventListener('DOMContentLoaded', () => {
     createArtPlannerGrid();
     updateArtPlanner();
     renderPatternLibrary();
-});
-
-// Theme Color Picker functionality
-document.addEventListener('DOMContentLoaded', () => {
-    const colorInputs = {
-        slate: document.getElementById('colorSlate'),
-        teal: document.getElementById('colorTeal'),
-        purple: document.getElementById('colorPurple'),
-        coral: document.getElementById('colorCoral'),
-        amber: document.getElementById('colorAmber'),
-        rose: document.getElementById('colorRose'),
-        blue: document.getElementById('colorBlue')
-    };
-
-    const hexDisplays = {
-        slate: document.getElementById('hexSlate'),
-        teal: document.getElementById('hexTeal'),
-        purple: document.getElementById('hexPurple'),
-        coral: document.getElementById('hexCoral'),
-        amber: document.getElementById('hexAmber'),
-        rose: document.getElementById('hexRose'),
-        blue: document.getElementById('hexBlue')
-    };
-
-    const defaultColors = {
-        slate: '#2d3a4d',
-        teal: '#3F8B7F',
-        purple: '#5f448e',
-        coral: '#E07A5F',
-        amber: '#e5a800',
-        rose: '#c75289',
-        blue: '#3D5A80'
-    };
-
-    // CSS variable mapping
-    const cssVarMap = {
-        slate: '--slate-800',
-        teal: '--teal-600',
-        purple: '--purple-700',
-        coral: '--coral-500',
-        amber: '--amber-500',
-        rose: '--rose-600',
-        blue: '--blue-600'
-    };
-
-    // Update hex display
-    function updateHexDisplay(name, value) {
-        if (hexDisplays[name]) {
-            hexDisplays[name].textContent = value.toUpperCase();
-        }
-    }
-
-    // Load saved theme from localStorage
-    function loadSavedTheme() {
-        const savedTheme = localStorage.getItem('wordleTheme');
-        if (savedTheme) {
-            try {
-                const theme = JSON.parse(savedTheme);
-                Object.keys(theme).forEach(key => {
-                    if (colorInputs[key]) {
-                        colorInputs[key].value = theme[key];
-                        const cssVar = cssVarMap[key];
-                        if (cssVar) {
-                            document.documentElement.style.setProperty(cssVar, theme[key]);
-                        }
-                        updateHexDisplay(key, theme[key]);
-                    }
-                });
-            } catch (e) {
-                console.error('Failed to load theme:', e);
-            }
-        }
-    }
-
-    // Apply color change
-    function applyColor(name, value) {
-        const cssVar = cssVarMap[name];
-        if (cssVar) {
-            document.documentElement.style.setProperty(cssVar, value);
-        }
-        updateHexDisplay(name, value);
-        saveTheme();
-    }
-
-    // Save current theme
-    function saveTheme() {
-        const theme = {};
-        Object.keys(colorInputs).forEach(key => {
-            if (colorInputs[key]) {
-                theme[key] = colorInputs[key].value;
-            }
-        });
-        localStorage.setItem('wordleTheme', JSON.stringify(theme));
-    }
-
-    // Add event listeners to color inputs
-    Object.keys(colorInputs).forEach(key => {
-        const input = colorInputs[key];
-        if (input) {
-            input.addEventListener('input', (e) => {
-                applyColor(key, e.target.value);
-            });
-        }
-    });
-
-    // Add click-to-copy on hex values
-    Object.keys(hexDisplays).forEach(key => {
-        const hexSpan = hexDisplays[key];
-        if (hexSpan) {
-            hexSpan.addEventListener('click', () => {
-                const hex = hexSpan.textContent;
-                navigator.clipboard.writeText(hex).then(() => {
-                    const original = hexSpan.textContent;
-                    hexSpan.textContent = 'Copied!';
-                    setTimeout(() => {
-                        hexSpan.textContent = original;
-                    }, 1000);
-                });
-            });
-        }
-    });
-
-    // Reset theme button
-    const resetBtn = document.getElementById('resetTheme');
-    if (resetBtn) {
-        resetBtn.addEventListener('click', () => {
-            Object.keys(defaultColors).forEach(key => {
-                if (colorInputs[key]) {
-                    colorInputs[key].value = defaultColors[key];
-                    const cssVar = cssVarMap[key];
-                    if (cssVar) {
-                        document.documentElement.style.setProperty(cssVar, defaultColors[key]);
-                    }
-                    updateHexDisplay(key, defaultColors[key]);
-                }
-            });
-            localStorage.removeItem('wordleTheme');
-        });
-    }
-
-    // Export theme button (copy CSS to clipboard)
-    const exportBtn = document.getElementById('exportTheme');
-    if (exportBtn) {
-        exportBtn.addEventListener('click', () => {
-            const css = `/* UI Colors */
---slate-800: ${colorInputs.slate.value};
---teal-600: ${colorInputs.teal.value};
---purple-700: ${colorInputs.purple.value};
---coral-500: ${colorInputs.coral.value};
---amber-500: ${colorInputs.amber.value};
---rose-600: ${colorInputs.rose.value};
---blue-600: ${colorInputs.blue.value};`;
-            navigator.clipboard.writeText(css).then(() => {
-                const originalText = exportBtn.textContent;
-                exportBtn.textContent = 'Copied!';
-                setTimeout(() => {
-                    exportBtn.textContent = originalText;
-                }, 2000);
-            }).catch(err => {
-                console.error('Failed to copy:', err);
-            });
-        });
-    }
-
-    // Load saved theme on init
-    loadSavedTheme();
 });
