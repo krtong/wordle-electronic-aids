@@ -3232,6 +3232,39 @@ document.addEventListener('DOMContentLoaded', () => {
     loadWords();
     initializeWidgets();
 
+    // Set help tooltip content based on device type
+    const helpTooltip = document.getElementById('helpTooltip');
+    const isTouchDevice = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
+
+    if (helpTooltip) {
+        if (isTouchDevice) {
+            helpTooltip.innerHTML = `
+                <p><strong>How to use:</strong></p>
+                <p>• Tap a tile to select it and type a letter</p>
+                <p>• Tap a selected tile to cycle its color</p>
+                <p>• Long-press a tile to clear it</p>
+                <p class="color-cycle"><span class="gray-example">GRAY</span> → <span class="yellow-example">YELLOW</span> → <span class="green-example">GREEN</span></p>
+                <p><strong>Color meanings:</strong></p>
+                <p>• <span class="gray-example">GRAY</span> = letter not in word</p>
+                <p>• <span class="yellow-example">YELLOW</span> = wrong position</p>
+                <p>• <span class="green-example">GREEN</span> = correct position</p>
+            `;
+        } else {
+            helpTooltip.innerHTML = `
+                <p><strong>Change tile colors:</strong></p>
+                <p>• Press <kbd>TAB</kbd> when tile is selected</p>
+                <p>• Double-click on a tile</p>
+                <p>• Shift-click on a tile</p>
+                <p>• Keyboard: <kbd>1</kbd>=Gray, <kbd>2</kbd>=Yellow, <kbd>3</kbd>=Green</p>
+                <p class="color-cycle"><span class="gray-example">GRAY</span> → <span class="yellow-example">YELLOW</span> → <span class="green-example">GREEN</span></p>
+                <p><strong>Color meanings:</strong></p>
+                <p>• <span class="gray-example">GRAY</span> = letter not in word</p>
+                <p>• <span class="yellow-example">YELLOW</span> = wrong position</p>
+                <p>• <span class="green-example">GREEN</span> = correct position</p>
+            `;
+        }
+    }
+
     // Help tooltip toggle for touch devices
     const helpContainer = document.querySelector('.help-icon-container');
     if (helpContainer) {
