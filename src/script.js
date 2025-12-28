@@ -474,6 +474,18 @@ function createGrid() {
                 });
                 gridArea.appendChild(prompt);
 
+                // Try to trigger keyboard programmatically
+                // Note: iOS blocks this for security, but we try anyway
+                setTimeout(() => {
+                    overlay.focus();
+                    overlay.click();
+                    overlay.select();
+                    // Try setSelectionRange as another approach
+                    try {
+                        overlay.setSelectionRange(0, 0);
+                    } catch (e) {}
+                }, 100);
+
                 const removeOverlay = () => {
                     if (overlay.parentNode) overlay.remove();
                     if (prompt.parentNode) prompt.remove();
